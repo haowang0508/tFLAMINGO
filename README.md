@@ -31,9 +31,51 @@ The standard sparse-matrix format scHi-C data is accepted
 chr1 12345 chr1 13456
 ```
 ## Reconstruct the 3D genome structure with tFLAMINGOr
-The main function of tFLAMINGO can be utilized as follow:<br>
+Supposing the scHi-C data for all single cells are stored at `./data`, the following code preprocesses the data.
 ```
-# generate contact maps from the raw data
 library(tFLAMINGOr)
+# first generate contact maps at low-resolution (300kb)
+tflamingo.generate_matrix(input_path='./data', resolution=300000, opt_path='./300kb_contact_maps',assembly='mm10')
 
+# then generate contact maps at high-resolution (10kb)
+tflamingo.generate_matrix(input_path='./data', resolution=10000, opt_path='./10kb_contact_maps',assembly='mm10')
+
+# Transform scHi-C data (300kb)
+tflamingo.linear_transformation(chr_name='chr19',resolution=300000,input_path='./300kb_contact_maps',  opt_path='./300kb_contact_maps_transformed',assembly='mm10')
+
+# Transform scHi-C data (10kb)
+tflamingo.linear_transformation(chr_name='chr19',resolution=1000,input_path='./10kb_contact_maps',  opt_path='./10kb_contact_maps_transformed',assembly='mm10')
+```
+Applies tensor-completion method
+```
+python src/Paralized_Low_rank_tensor_completion_FFTW.py -i './300kb_contact_maps_transformed' -o './LRTC_300kb_contact_maps' -s 300kb -max_iter 150 -n_core 10
+python src/Paralized_Low_rank_tensor_completion_FFTW.py -i './10kb_contact_maps_transformed' -o './LRTC_10kb_contact_maps' -s 10kb -max_iter 150 -n_core 10
+python src/Extract_matrix_from_LRTC.py -i './LRTC_300kb_contact_maps/300kb.npy' -o './300kb_contact_maps_FLAMINGO'
+python src/Extract_matrix_from_LRTC.py -i './LRTC_10kb_contact_maps/10kb/npy' -o './10kb_contact_maps_FLAMINGO'
+```
+Reconstruct the 3D chromatin structures:
+```
+library(tFLAMINGOr)
+n = length(dir('./10kb_contact_maps_FLAMINGO') )
+res_list <- list()
+for(idx in 1:n){
+  input_PD_high = paste0('./10kb_contact_maps_FLAMINGO/PD_Cell_',idx,'.txt')
+  input_IF_high=paste0('./10kb_contact_maps_FLAMINGO/IF_Cell_',idx,'.txt')
+  input_PD_low=paste0('./300kb_contact_maps_FLAMINGO/PD_Cell_',idx,'.txt')
+  input_IF_low=paste0('./300kb_contact_maps_FLAMINGO/IF_Cell_',idx,'.txt')
+  res_list[[i]] <- tflamingo.main_func(
+         input_PD_high=input_PD_high,
+         input_IF_high=input_IF_high,
+         input_PD_low=input_PD_low,
+         input_IF_low=input_IF_low,
+         domain_res = 300000,
+         frag_res = 10000,
+         chr_name='chr19',
+         downsampling_rates=0.75,
+         lambda=10,
+         max_dist=0.05,
+         nThread=20,
+         max_iter=500
+  )
+}
 ```
