@@ -1,6 +1,6 @@
 # tFLAMINGO: **t**ensor-based **F**ast **L**ow-r**A**nk **M**atrix completion algorithm for reconstruct**IN**g high-resolution 3D **G**enome **O**rganizations
 ## Gallery
-**The 3D structures of chromosome 21 for 15 single cells in 10-kb resolution** based on Dip-C data (GM12878).
+**The 3D structures of chromosome 21 for 14 single cells in 10-kb resolution** based on Dip-C data (GM12878).
 ![chr21_Dip-C](./predictions/images/chr21_Dip-C.png)
 
 ## Summary
