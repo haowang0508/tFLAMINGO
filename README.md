@@ -96,3 +96,7 @@ write.vtk(points=res[,-1],lookup_table=rep(1,dim(res)[1]),name='chr1 5kb 3D stru
 *name*: output file name annotated within the file.<br>
 
 *opt_path*: output file path including the file name. <br>
+
+
+## simulate data
+We also provide the simulated structures and down-sampled matrices to reproduce the simulation of tFLAMINGO. In the directory `simulation`, we provide three consensus structures (`simulation/Structure/consensus*`) and 10 ramdomly downsampled data for each consensus structure ('simulation/downsampled_data'). Users can follow the example (step 2 and step 3) above to repeat the result of simulations.
