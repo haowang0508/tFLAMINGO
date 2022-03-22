@@ -4,10 +4,10 @@
 ![chr21_Dip-C](./predictions/images/chr21_Dip-C.png)
 
 ## Summary
-tFLAMINGO aims to accurately reconstruct the 3D chromatin structures for each single cell from super sparse scHi-C contact maps (missing rate > 99.95%). Remarkablely, the tensor-completion-based method borrows information across single cells, while preserving the unique 3D chromatin structures of each single cell.
+tFLAMINGO aims to accurately reconstruct the 3D chromatin structures for single cells from highly sparse scHi-C contact maps (missing rate > 99.95%). Remarkably, the tensor-completion-based method borrows information across single cells, while preserving the unique 3D chromatin structures of every single cell.
 
 ## Introduction
-tFLAMINGO takes scHi-C data for tens to hundreds of single cells as inputs and reconstruct the 3D chromatin structure for each single cell. tFLAMINGO has two major steps. In the first step, the contact maps of all single cells are modeled as a sparse tensor and then complted using the low-rank tensor completion method. This step gives a much denser contact maps (missing rate 90%-95%) for each single cell. In the second step, the 3D genome structures are reconstructed for each single cell from the completed contact map using [FLAMINGO](https://github.com/wangjr03/FLAMINGO/).
+tFLAMINGO takes scHi-C data for tens to hundreds of single cells as inputs and reconstruct the 3D chromatin structure for every single cell. tFLAMINGO has two major steps. In the first step, the contact maps of all single cells are modeled as a sparse tensor and then completed using the low-rank tensor completion method. This step gives much denser contact maps (missing rate 90%-95%) for single celsl. In the second step, the 3D genome structuresare reconstructed for every single cell from the completed contact map using [FLAMINGO](https://github.com/wangjr03/FLAMINGO/).
 
 ## Dependencies
 The implementation of the algorithm is based on python/3.8 and R/3.5.1. It depends on three R packages (Matrix, FLAMINGOr and GenomicFeatures) and seven python libraries (pyfftw, scipy, numpy, pandas, math, joblib and ray).
@@ -31,7 +31,7 @@ The standard sparse-matrix format scHi-C data is accepted
 chr1 12345 chr1 13456
 ```
 ## Example of reconstructing the 3D genome structure with tFLAMINGOr
-Supposing the scHi-C data for all single cells are stored at `./data`, the following code preprocesses the data.
+Supposing the scHi-C data for all single cells are stored at `./data`, the following example code preprocesses the data.
 ```
 library(tFLAMINGOr)
 # first generate contact maps at low-resolution (300kb)
@@ -53,7 +53,7 @@ python src/Paralized_Low_rank_tensor_completion_FFTW.py -i './10kb_contact_maps_
 python src/Extract_matrix_from_LRTC.py -i './LRTC_300kb_contact_maps/300kb.npy' -o './300kb_contact_maps_FLAMINGO'
 python src/Extract_matrix_from_LRTC.py -i './LRTC_10kb_contact_maps/10kb/npy' -o './10kb_contact_maps_FLAMINGO'
 ```
-Reconstruct the 3D chromatin structures:
+Reconstruct the 3D chromatin structures using FLAMINGO:
 ```
 library(tFLAMINGOr)
 n = length(dir('./10kb_contact_maps_FLAMINGO') )
@@ -99,4 +99,4 @@ write.vtk(points=res[,-1],lookup_table=rep(1,dim(res)[1]),name='chr1 5kb 3D stru
 
 
 ## simulate data
-We also provide the simulated structures and down-sampled matrices to reproduce the simulation of tFLAMINGO. In the directory `simulation`, we provide three consensus structures (`simulation/Structure/consensus*`) and 10 ramdomly downsampled data for each consensus structure ('simulation/downsampled_data'). Users can follow the example (step 2 and step 3) above to repeat the result of simulations.
+We also provide the simulated structures and down-sampled matrices to reproduce the simulation of tFLAMINGO. In the directory `simulation`, we provide three consensus structures (`simulation/Structure/consensus*`) and 30 randomly downsampled distance matrices (10 for each consensus structure, 'simulation/downsampled_data'). Users can follow the example code (step 2 and step 3) above to repeat the result of simulations.
