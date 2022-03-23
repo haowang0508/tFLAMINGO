@@ -26,7 +26,7 @@ library(devtools)
 install_github('wangjr03/tFLAMINGO/tFLAMINGOr')
 ```
 ## Input data
-The standard sparse-matrix format scHi-C data is accepted
+The standard sparse-matrix format of scHi-C data is accepted (Tan et al., Nagano et al, Flyamer et al and Lee et al.). 
 ```
 chr1 12345 chr1 13456
 ```
